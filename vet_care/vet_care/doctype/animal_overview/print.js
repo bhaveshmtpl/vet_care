@@ -6,6 +6,15 @@ function print_history(frm) {
         {
           patient: frm.doc.animal,
           data: frm.clinical_history,
+          customer: frm.doc.owner_name,
+          cur_date: frappe.datetime.nowdate(),
+          chip_id: frm.doc.chip_id,
+          dob: frm.doc.dob,
+          neutered: frm.doc.neutered,
+          color: frm.doc.color,
+          deceased: "NA",
+          species: frm.doc.species,
+          breed: frm.doc.breed
         },
         print_settings
       ),
@@ -37,6 +46,15 @@ function _print_clinical_history(data, print_settings) {
   const content = frappe.render_template("clinical_history", {
     patient: data.patient,
     data: data.data,
+    cur_date: data.cur_date,
+    customer: data.customer,
+    chip_id: data.chip_id,
+    dob: data.dob,
+    neutered: data.neutered,
+    color: data.color,
+    deceased: data.eceased,
+    species: data.species,
+    breed: data.breed
   });
   const html = frappe.render_template("print_template", {
     title: "Clinical History",

@@ -1,5 +1,26 @@
-<h1>Clinical History</h1>
-<h2>{{ patient }}</h2>
+<h1>Clinical History xxxx</h1>
+<table style="width:100%;">
+    <tr>
+        <td style="width:50%;"> Customer : {{ customer }}  </td>
+        <td style="width:50%;"> Date : {{ cur_date }}</td>
+    </tr>
+    <tr>
+        <td style="width:50%;"> Patient : {{ patient }} </td>
+        <td style="width:50%;"> Chip ID : {{ chip_id }}</td>
+    </tr>
+    <tr>
+        <td style="width:50%;"> Date of Birth : {{ dob }} </td>
+        <td style="width:50%;"> Neutered : {{ neutered }}</td>
+    </tr>
+    <tr>
+        <td style="width:50%;"> Color : {{ color }} </td>
+        <td style="width:50%;"> Deceased : {{ deceased }}</td>
+    </tr>
+    <tr>
+        <td style="width:50%;"> Species : {{ species }} </td>
+        <td style="width:50%;"> Breed : {{ breed }}</td>
+    </tr>
+</table>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -11,12 +32,12 @@
     </thead>
     <tbody>
         {% for row in data %}
-            <tr>
-                <td>{{ row['posting_date'] }}</td>
-                <td>{{ row['name'] }}</td>
-                <td>{{ row['description'] }}</td>
-                <td>{{ format_currency(row['price']) }}</td>
-            </tr>
+        <tr>
+            <td>{{ row['posting_date'] }}</td>
+            <td>{{ row['name'] }}</td>
+            <td>{{ row['description'] }}</td>
+            <td>{{ format_currency(row['price']) }}</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
