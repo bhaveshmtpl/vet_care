@@ -1,18 +1,18 @@
-function print_history(frm) {
+function print_history(frm, print_data_) {
   frappe.ui.get_print_settings(
     false,
     (print_settings) =>
       _print_clinical_history(
         {
-          patient: frm.doc.animal,
+          patient: frm.doc.animal_name,
           data: frm.clinical_history,
           customer: frm.doc.owner_name,
-          cur_date: frappe.datetime.nowdate(),
+          cur_date:print_data_.cur_date_,
           chip_id: frm.doc.chip_id,
           dob: frm.doc.dob,
           neutered: frm.doc.neutered,
           color: frm.doc.color,
-          deceased: "NA",
+          deceased: print_data_.deceased ,
           species: frm.doc.species,
           breed: frm.doc.breed
         },
@@ -52,7 +52,7 @@ function _print_clinical_history(data, print_settings) {
     dob: data.dob,
     neutered: data.neutered,
     color: data.color,
-    deceased: data.eceased,
+    deceased: data.deceased,
     species: data.species,
     breed: data.breed
   });
