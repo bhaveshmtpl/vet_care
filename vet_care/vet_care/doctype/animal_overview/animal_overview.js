@@ -165,8 +165,9 @@ frappe.ui.form.on('Animal Overview', {
     discount_amount: function(frm) {
       _update_total(frm);
     },
-    print_history: function(frm) {
-      print_history(frm);
+    print_history: function (frm) {
+      const print_data_ = print_data(frm)
+      print_history(frm, print_data_);
     },
 });
 
@@ -196,6 +197,37 @@ frappe.ui.form.on('Animal Overview Item', {
       _update_total(frm);
 	},
 });
+
+
+function print_data(frm) {
+  const date = new Date();
+  const cur_date_ = `${date.getDate()}-${
+    date.getMonth() + 1
+  }-${date.getFullYear()}`;
+
+  var deceased = ""
+  frappe.call({
+    method: "frappe.client.get_value",
+    args: {
+      doctype: "Patient",
+      filters: {
+        name: frm.doc.animal
+      },
+      fieldname: ["vc_deceased"]
+    },
+    async: false,
+    callback: function (r) {
+      if (r.message.vc_deceased === 0) {
+        deceased = "No"
+      }
+      else if (r.message.vc_deceased === 1) {
+        deceased = "Yes"
+      }
+    }
+  })
+  return {"deceased" : deceased, "cur_date_":cur_date_ }
+}
+
 
 function _set_invoice_query(frm) {
 	frm.set_query('invoice', function(doc, cdt, cdn) {
