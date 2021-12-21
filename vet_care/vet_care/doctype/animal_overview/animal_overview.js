@@ -38,7 +38,7 @@ frappe.ui.form.on('Animal Overview', {
         _set_attach_read_only(frm);
     },
     inpatient: async function(frm) {
-        if (!frm.doc.animal || frm.doc.__init) return;
+        if (!frm.doc.animal) return; // if (!frm.doc.animal || frm.doc.__init) return;
         if (frm.doc.inpatient) {
             const values = await vet_care.utils.prompt_admission_dialog();
             frm.doc.__new_patient_activity = true;
