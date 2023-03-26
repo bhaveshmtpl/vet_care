@@ -46,7 +46,13 @@ frappe.ui.form.on('Animal Overview', {
             frm.doc.__posting_date = values.posting_date;
             frm.doc.__posting_time = values.posting_time;
         } else {
-            const values = await vet_care.utils.prompt_discharge_dialog();
+            //Placeholder values to avoid values undefined error
+            const values = {
+              "reason": "Placeholder",
+              "posting_date": "2023-01-01",
+              "posting_time": "20:00:00"
+            }
+
             frm.doc.__new_patient_activity = true;
             frm.doc.__reason = values.reason;
             frm.doc.__posting_date = values.posting_date;
