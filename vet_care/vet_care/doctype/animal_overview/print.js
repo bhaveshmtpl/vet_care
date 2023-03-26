@@ -5,6 +5,9 @@ function print_history(frm) {
       _print_clinical_history(
         {
           patient: frm.doc.animal,
+          animal_name:frm.doc.animal_name,
+          default_owner:frm.doc.default_owner,
+          owner_name:frm.doc.owner_name,
           data: frm.clinical_history,
         },
         print_settings
@@ -34,8 +37,18 @@ function _print_clinical_history(data, print_settings) {
   const base_url = frappe.urllib.get_base_url();
   const print_css = frappe.boot.print_css;
   const landscape = print_settings.orientation == "Landscape";
+
+  // get current date and time 
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
   const content = frappe.render_template("clinical_history", {
     patient: data.patient,
+    animal_name:data.animal_name,
+    default_owner:data.default_owner,
+    owner_name:data.owner_name,
+    printed_on:dateTime,
     data: data.data,
   });
   const html = frappe.render_template("print_template", {
