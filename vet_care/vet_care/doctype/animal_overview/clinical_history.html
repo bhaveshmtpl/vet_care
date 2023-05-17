@@ -1,5 +1,19 @@
+
+
+<html lang="en">
 <h1>Clinical History</h1>
-<h2>{{ patient }}</h2>
+<div class="row">
+    <div class="col-xs-3">Customer code :</div>
+    <div class="col-xs-3">{{default_owner}}</div>
+    <div class="col-xs-3">Patient Code :</div>
+    <div class="col-xs-3">{{patient}}</div>
+</div>
+<div class="row">
+    <div class="col-xs-3">Customer Name :</div>
+    <div class="col-xs-3">{{owner_name}}</div>
+    <div class="col-xs-3">Patient Name :</div>
+    <div class="col-xs-3">{{animal_name}}</div>
+</div>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -20,3 +34,6 @@
         {% endfor %}
     </tbody>
 </table>
+<footer>
+    <p>Printed on: {{printed_on}}</p>
+  </footer>
