@@ -7,6 +7,7 @@
   "item_code",
   "item_name",
   "uom",
+  "uom_conversion_factor",
   "qty",
   "rate",
   "amount",
@@ -84,10 +85,16 @@
    "in_list_view": 1,
    "label": "Batch",
    "options": "Batch"
+  },
+  {
+   "fieldname": "uom_conversion_factor",
+   "fieldtype": "Data",
+   "label": "UOM Conversion Factor",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2022-10-20 10:03:03.263793",
+ "modified": "2023-12-04 19:07:00.708667",
  "modified_by": "Administrator",
  "module": "Vet Care",
  "name": "Animal Overview Item",

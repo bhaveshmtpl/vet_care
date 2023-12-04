@@ -1,6 +1,6 @@
 frappe.ui.form.on('Customer', {
     refresh: function(frm) {
-        _set_dashboard(frm);
+        // _set_dashboard(frm);
     }
 });
 

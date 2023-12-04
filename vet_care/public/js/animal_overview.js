@@ -1,6 +1,4 @@
 
-// frappe.ui.form.on('Animal Overview', {
-//     refresh(frm) {
 // frm.fields_dict['items'].grid.get_field('batch').get_query = function(doc, cdt, cdn) {
 //         var child = locals[cdt][cdn];
 //         //console.log(child);
@@ -10,8 +8,6 @@
 //             ]
 //         }
 //     }
-// }
-// })
 this.frm.cscript.onload = function (frm) {
     this.frm.set_query("batch_no", "items", function (doc, cdt, cdn) {
         let d = locals[cdt][cdn];
@@ -30,8 +26,63 @@ this.frm.cscript.onload = function (frm) {
                 }
             }
         }
-    });
+    });  
 }
+
+frappe.ui.form.on('Animal Overview', {
+    setup: function (frm, cdt, cdn) {
+        frm.fields_dict['items'].grid.get_field('uom').get_query = function (frm, cdt, cdn) {
+            var row = locals[cdt][cdn];
+            return {
+                query: "vet_care.api.get_item_uoms",
+                filters: {
+                    'item_code': row.item_code
+                }
+            };    
+        }
+    }
+});
+
+
+frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
+    var child = locals[cdt][cdn];
+
+    frappe.call({
+        method: 'frappe.client.get_list',
+        args: {
+            doctype: 'Item Price',
+            filters: {
+                'item_code': child.item_code,
+                'price_list': "Standard Selling"
+            },
+            fields: ['price_list_rate'],
+            limit: 1
+        },
+        callback: function (r) {
+            if (r.message && r.message.length > 0) {
+                var priceListRate = r.message[0].price_list_rate;
+
+                frappe.call({
+                    method: 'vet_care.api.get_item_uoms_conversion',
+                    args: {
+                        'item_code': child.item_code,
+                        'uom': child.uom,
+                    },
+                    callback: function (r) {
+                        if (r.message) {
+                            frappe.model.set_value(cdt, cdn, 'uom_conversion_factor', r.message);
+                            var customRate = r.message * priceListRate;
+                            frappe.model.set_value(cdt, cdn, 'rate', customRate);
+                        }
+                    }
+                });
+            }
+        }
+    });
+});
+
+
+
 
 // frappe.ui.form.on('Animal Overview Item', 'warehouse', function(frm, cdt, cdn) {
 //     $.each(frm.doc.items || [], function(i, d) {

@@ -557,3 +557,17 @@ def get_search_values(customer):
     if isinstance(customer, object) and customer.__class__.__name__ == "Customer":
         values = [customer.get(x) for x in fields]
         return join(values)
+
+@frappe.whitelist()
+def get_item_uoms(doctype, txt, searchfield, start, page_len, filters):
+    return frappe.db.sql(f"SELECT uom FROM `tabUOM Conversion Detail` WHERE parent = '{filters.get('item_code')}'")
+
+@frappe.whitelist()
+def get_item_uoms_conversion(item_code, uom):
+    conversion_factor = frappe.db.get_value('UOM Conversion Detail',
+                                           {'parent': item_code, 'uom': uom},
+                                           'conversion_factor')
+
+    return conversion_factor
+
+
