@@ -43,43 +43,75 @@ frappe.ui.form.on('Animal Overview', {
     }
 });
 
-
 frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
     var child = locals[cdt][cdn];
 
-    frappe.call({
-        method: 'frappe.client.get_list',
-        args: {
-            doctype: 'Item Price',
-            filters: {
-                'item_code': child.item_code,
-                'price_list': "Standard Selling"
+    if (!child.uom) {
+        frappe.throw("Please enter UOM");
+    } else {
+        frappe.call({
+            method: 'frappe.client.get_list',
+            args: {
+                doctype: 'Item Price',
+                filters: {
+                    'item_code': child.item_code,
+                    'uom': child.uom,
+                    'price_list': "Standard Selling"
+                },
+                fields: ['price_list_rate'],
+                limit: 1
             },
-            fields: ['price_list_rate'],
-            limit: 1
-        },
-        callback: function (r) {
-            if (r.message && r.message.length > 0) {
-                var priceListRate = r.message[0].price_list_rate;
-
-                frappe.call({
-                    method: 'vet_care.api.get_item_uoms_conversion',
-                    args: {
-                        'item_code': child.item_code,
-                        'uom': child.uom,
-                    },
-                    callback: function (r) {
-                        if (r.message) {
-                            frappe.model.set_value(cdt, cdn, 'uom_conversion_factor', r.message);
-                            var customRate = r.message * priceListRate;
-                            frappe.model.set_value(cdt, cdn, 'rate', customRate);
-                        }
-                    }
-                });
+            callback: function (r) {
+                if (r.message && r.message.length > 0) {
+                    var priceListRate = r.message[0].price_list_rate;
+                    frappe.model.set_value(cdt, cdn, 'rate', priceListRate);
+                }
             }
-        }
-    });
+        });
+    }
 });
+
+
+
+// frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
+//     var child = locals[cdt][cdn];
+
+//     if (!child.uom) {
+//         frappe.throw("Please enter UOM");
+//     } else {
+//         frappe.call({
+//             method: 'frappe.client.get_list',
+//             args: {
+//                 doctype: 'Item Price',
+//                 filters: {
+//                     'item_code': child.item_code,
+//                     'price_list': "Standard Selling"
+//                 },
+//                 fields: ['price_list_rate'],
+//                 limit: 1
+//             },
+//             callback: function (r) {
+//                 if (r.message && r.message.length > 0) {
+//                     var priceListRate = r.message[0].price_list_rate;
+
+//                     frappe.call({
+//                         method: 'vet_care.api.get_item_uoms_conversion',
+//                         args: {
+//                             'item_code': child.item_code,
+//                             'uom': child.uom,
+//                         },
+//                         callback: function (r) {
+//                             if (r.message) {
+//                                 frappe.model.set_value(cdt, cdn, 'uom_conversion_factor', r.message);
+//                             }
+//                         }
+//                     });
+//                 }
+//             }
+//         });
+//     }
+// });
+
 
 
 
@@ -103,17 +135,21 @@ frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
 //       refresh_field("item_code");
 //     })
 frappe.ui.form.on('Animal Overview Item', 'item_code', function(frm, cdt, cdn) {
-$.each(frm.doc.items || [], function(i, d) {
-    frappe.call({
-        method: "vet_care.doc_events.animal_overview.get_warehouse",
-        args: {"item_code":d.item_code},
-        callback: function(r) {
-            console.log(r.message);
-            var warehouse = r.message
-            frappe.model.set_value(cdt, cdn, d.warehouse, r.message);
-            d.warehouse=warehouse
+    $.each(frm.doc.items || [], function(i, d) {
+        if (!d.item_code) {
+            frappe.throw("Please enter item");
+        } else {
+            frappe.call({
+                method: "vet_care.doc_events.animal_overview.get_warehouse",
+                args: {"item_code": d.item_code},
+                callback: function(r) {
+                    console.log(r.message);
+                    var warehouse = r.message;
+                    frappe.model.set_value(cdt, cdn, d.warehouse, r.message);
+                    d.warehouse = warehouse;
+                }
+            });
         }
-    })
-})
-      refresh_field("item_code");
-})
+    });
+    refresh_field("item_code");
+});

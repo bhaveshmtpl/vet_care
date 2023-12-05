@@ -456,6 +456,8 @@ def get_selling_price_list():
 
 @frappe.whitelist()
 def get_item_rate(item_code, selling_price_list):
+    if not item_code:
+        frappe.throw("Please Enter Item")
     return compose(first, partial(pluck, "price_list_rate"))(
         frappe.get_all(
             "Item Price",

@@ -35,11 +35,12 @@ from frappe.desk.reportview import get_match_cond, get_filters_cond
     # print("////////////////",batch)
 @frappe.whitelist(allow_guest=True)
 def get_warehouse(item_code):
-  if item_code:
-    pos_profile = frappe.db.get_single_value("Vetcare Settings", "pos_profile")
-    warehouse = frappe.db.get_value("POS Profile", pos_profile, "warehouse")
-    return warehouse
-    frappe.msgprint(str(warehouse))
+	if not item_code:
+		frappe.throw("Please Enter Item")
+	pos_profile = frappe.db.get_single_value("Vetcare Settings", "pos_profile")
+	warehouse = frappe.db.get_value("POS Profile", pos_profile, "warehouse")
+	return warehouse
+    # frappe.msgprint(str(warehouse))
 
 @frappe.whitelist(allow_guest=True)
 def get_batch_no(doctype, txt, searchfield, start, page_len, filters):

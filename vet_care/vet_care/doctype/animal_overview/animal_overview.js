@@ -193,8 +193,10 @@ frappe.ui.form.on('Animal Overview Item', {
 			frappe.model.set_value(cdt, cdn, 'qty', 1.0);
 		}
 		if (!child.rate) {
+      if (child.item_code){
 			const item_rate = await get_item_rate(child.item_code, frm.__selling_price_list);
 			frappe.model.set_value(cdt, cdn, 'rate', item_rate);
+      }
 		}
 	},
 	items_remove: function(frm) {
