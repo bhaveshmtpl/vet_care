@@ -50,27 +50,93 @@ frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
         frappe.throw("Please enter UOM");
     } else {
         frappe.call({
-            method: 'frappe.client.get_list',
+            method: 'vet_care.api.get_item_uoms_conversion',
             args: {
-                doctype: 'Item Price',
-                filters: {
-                    'item_code': child.item_code,
-                    'uom': child.uom,
-                    'price_list': "Standard Selling"
-                },
-                fields: ['price_list_rate'],
-                limit: 1
+                'item_code': child.item_code,
+                'uom': child.uom,
             },
             callback: function (r) {
-                if (r.message && r.message.length > 0) {
-                    var priceListRate = r.message[0].price_list_rate;
-                    frappe.model.set_value(cdt, cdn, 'rate', priceListRate);
+                if (r.message) {
+                    frappe.model.set_value(cdt, cdn, 'uom_conversion_factor', r.message);
                 }
+
+                frappe.call({
+                    method: 'vet_care.api.get_item_price',
+                    args: {
+                        'item_code': child.item_code,
+                        'uom': child.uom
+                    },
+                    callback: function (r_price) {
+                        var priceListRate = r_price.message;
+                        if (priceListRate) {
+                            frappe.model.set_value(cdt, cdn, 'rate', priceListRate);
+                        } else {
+                            frappe.call({
+                                method: 'vet_care.api.get_item_price_custom',
+                                args: {
+                                    'item_code': child.item_code,
+                                },
+                                callback: function (r_priceone) {
+                                    var priceListRate = r_priceone.message;
+                                    var customcalculation = child.uom_conversion_factor * r_priceone.message;
+                                    frappe.model.set_value(cdt, cdn, 'rate', customcalculation);
+                                }
+                            });
+                        }
+
+                        frm.refresh_fields(['rate', 'uom_conversion_factor']);
+                    }
+                });
             }
         });
     }
 });
 
+
+
+
+
+
+// frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {
+//     var child = locals[cdt][cdn];
+
+//     if (!child.uom) {
+//         frappe.throw("Please enter UOM");
+//     } else {
+//         frappe.call({
+//             method: 'frappe.client.get_list',
+//             args: {
+//                 doctype: 'Item Price',
+//                 filters: {
+//                     'item_code': child.item_code,
+//                     'uom': child.uom,
+//                     'price_list': "Standard Selling"
+//                 },
+//                 fields: ['price_list_rate'],
+//                 limit: 1
+//             },
+//             callback: function (r) {
+//                 if (r.message && r.message.length > 0) {
+//                     var priceListRate = r.message[0].price_list_rate;
+
+//                     frappe.call({
+//                         method: 'vet_care.api.get_item_uoms_conversion',
+//                         args: {
+//                             'item_code': child.item_code,
+//                             'uom': child.uom,
+//                         },
+//                         callback: function (r) {
+//                             if (r.message) {
+//                                 frappe.model.set_value(cdt, cdn, 'uom_conversion_factor', r.message);
+//                                 frappe.model.set_value(cdt, cdn, 'rate', priceListRate);
+//                             }
+//                         }
+//                     });
+//                 }
+//             }
+//         });
+//     }
+// });
 
 
 // frappe.ui.form.on('Animal Overview Item', 'uom', function (frm, cdt, cdn) {

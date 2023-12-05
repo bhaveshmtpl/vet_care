@@ -573,3 +573,23 @@ def get_item_uoms_conversion(item_code, uom):
     return conversion_factor
 
 
+@frappe.whitelist()
+def get_item_price(item_code, uom, price_list="Standard Selling"):
+    item_price = frappe.db.get_value(
+        "Item Price",
+        {"item_code": item_code, "uom": uom, "price_list": price_list},
+        "price_list_rate",
+    )
+    # print("item price",item_price)
+    return item_price or 0
+
+
+@frappe.whitelist()
+def get_item_price_custom(item_code,price_list="Standard Selling"):
+    item_price = frappe.db.get_value(
+        "Item Price",
+        {"item_code": item_code, "price_list": price_list},
+        "price_list_rate",
+    )
+    # print("item price", item_price)
+    return item_price or 0
