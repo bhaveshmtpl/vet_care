@@ -76,25 +76,31 @@ function _set_new_frm(frm) {
 
 
 async function _get_appointment_dates(frm) {
-  $(frm.fields_dict['appointment_time_html'].wrapper).html(`
-    <div class="row">
-      <div class="col-sm-12 schedules">
-      </div>
-    </div>
-  `);
-	_set_schedules_html(
+	$(frm.fields_dict['appointment_time_html'].wrapper).html(`
+	  <div class="row">
+		<div class="col-sm-12 schedules">
+		</div>
+	  </div>
+	`);
+  
+	if (frm.doc.physician) {
+	  _set_schedules_html(
 		await get_practitioner_schedules(
-			frm.doc.physician,
-			frm.doc.appointment_date)
-	);
-	$(`.schedule`).click(function() {
-		const value = $(this).data('value');
-		frm.set_value('appointment_time', value);
-		frm.set_df_property('appointment_time', 'hidden', 0);
+		  frm.doc.physician,
+		  frm.doc.appointment_date
+		)
+	  );
+	} else {
+	  frappe.msgprint(__('Please select a Physician'));
+	  return;
+	}  
+	$(`.schedule`).click(function () {
+	  const value = $(this).data('value');
+	  frm.set_value('appointment_time', value);
+	  frm.set_df_property('appointment_time', 'hidden', 0);
 	});
-}
-
-
+  }
+  
 function _set_schedules_html(schedules) {
 	if (schedules.length === 0) {
 		$('.schedules').append(`
