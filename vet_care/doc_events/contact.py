@@ -11,6 +11,9 @@ def validate(doc, method):
 
 def _validate_phone_nos(doc):
     def phone_number(data):
+        if not isinstance(data, str):
+            data = str(data)
+
         search = re.match(r'(^\+?)(.*)', data)
         return search.group(2)
 
